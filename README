@@ -1,0 +1,90 @@
+IMBREA GIULIA STEFANIA 321 CB
+TEMA 4 PCOM
+
+
+client.c
+
+int isValidUsername(const char* username)
+    -functie folosita pt a verifica daca un string este valid(nu contine spatii)
+
+void register_func(int sockfd, char *host, char **cookie)
+    - functie apelata la comanda "register"
+    - verific mai intai daca este deja logat folosind cookie
+    - citesc username si password si le verific validitatea
+    - creez un obiect JSON, si pregatesc cererea de POST pt server
+    - pentru a verifica daca raspunsul primit de la server e bun, ma folosesc de faptul ca in caz de succes,
+    receive_from_server returneaza un text ce contine apx la inceput, cuvantul "OK"
+    
+void login_func(int sockfd, char *host, char **cookie)
+    - functie apelata la comanda "login"
+    - verific mai intai daca este deja logat folosind cookie
+    - citesc username si password si le verific validitatea
+    - creez un obiect JSON, si pregatesc cererea de POST pt server
+    - pentru a verifica daca raspunsul primit de la server e bun, ma folosesc de faptul ca in caz de succes,
+    receive_from_server returneaza un text ce contine apx la inceput, cuvantul "OK"
+    - din raspunsul de la receive_from_server iau cookie urile (aflate pe rand cu cuvintele cheie: connect.sid) 
+    si le salvez in pointer ul de cookie dat ca parametru lateral functiei
+
+void enter_lib(int sockfd, char *host, char **cookie, char **token)
+    - functie apelata la comanda "enter_library"
+    - verific mai intai daca este deja logat folosind cookie
+    - verific daca a accesat biblioteca folosind token
+    - pregatesc cererea de tip get request si o trimit server ului
+    - din mesajul de raspuns iau partea ce tine de tokens si l copiez in token dat ca parametru functiei
+
+void get_books(int sockfd, char *host, char **cookie, char **token)
+    - functie apelata la comanda "get_books"
+    - verific mai intai daca este deja logat folosind cookie
+    - verific daca a accesat biblioteca folosind token
+    - pregatesc cererea de tip get request si o trimit server ului
+    - din mesajul de raspuns iau partea ce contine cartile , adica intre paranteze patrate
+
+void get_book(int sockfd, char *host, char **cookie, char **token)
+    - functie apelata la comanda "get_book"
+    - verific mai intai daca este deja logat folosind cookie
+    - verific daca a accesat biblioteca folosind token
+    - citesc id ul si verific daca e valid(contine cifre) folosind strtol
+    - pregatesc cererea de tip get request si o trimit server ului
+    - din mesajul de raspuns iau cartea folosind basic_extract_json_response
+
+void add_book(int sockfd, char *host, char **cookie, char **token) 
+    - functie apelata la comanda "add_book"
+    - verific mai intai daca este deja logat folosind cookie
+    - verific daca a accesat biblioteca folosind token
+    - citesc toate campurile pt carte(autor, titlu, etc)
+    - citesc nr pagini si verific daca e valid(contine cifre) folosind strtol
+    - pregatesc cererea de tip post request si o trimit server ului
+
+void delete_book(int sockfd, char *host, char **cookie, char **token)
+    - functie apelata la comanda "delete_book"
+    - verific mai intai daca este deja logat folosind cookie
+    - verific daca a accesat biblioteca folosind token
+    - citesc id si verific daca e valid(contine cifre) folosind strtol
+    - pregatesc cererea de tip delete request si o trimit server ului
+
+void log_out(int sockfd, char *host, char **cookie, char **token)
+    - functie apelata la comanda "log_out"
+    - verific mai intai daca este deja logat folosind cookie
+    - pregatesc cererea get req
+    - *cookie = NULL; eliberez cookie pt a arata c nu mai e nimeni logat
+      *token = NULL; eliberez token pt a arata ca nu este accesata biblioteca
+
+int main(int argc, char *argv[])
+    - aici pregatesc socket
+    - cu un while iau fiecare comanda pana cand dau de comanda explicit
+    - pt restul cazurilor apelez functia lor specifica
+
+
+
+request.c
+- am folosit scheletul din laboratorul 9 si am urmarit pasii de acolo
+
+char *compute_get_request
+    - am pastrat comentariile pt a vedea ce se intampla
+    - ce este in plus fata de lab: adaug cookie si token
+
+char *compute_post_request
+    - ca la get doar ca la numele metodei pun  POST (sprintf(line, "POST %s HTTP/1.1", url))
+
+char *compute_delete_request
+    - numele metodei contine DELETE
